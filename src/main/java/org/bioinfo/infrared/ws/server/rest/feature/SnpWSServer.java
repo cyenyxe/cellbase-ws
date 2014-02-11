@@ -1,11 +1,8 @@
 package org.bioinfo.infrared.ws.server.rest.feature;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javassist.expr.Instanceof;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -27,10 +24,6 @@ import org.bioinfo.infrared.core.cellbase.SnpPopulationFrequency;
 import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.api.TfbsDBAdaptor;
-import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
-import org.bioinfo.infrared.lib.common.GenomicVariant;
-import org.bioinfo.infrared.lib.common.Position;
-import org.bioinfo.infrared.lib.common.SnpRegulatoryConsequenceType;
 import org.bioinfo.infrared.ws.server.rest.GenericRestWSServer;
 import org.bioinfo.infrared.ws.server.rest.exception.VersionException;
 

@@ -23,6 +23,9 @@ import org.bioinfo.infrared.ws.server.rest.GenericRestWSServer;
 import org.bioinfo.infrared.ws.server.rest.exception.VersionException;
 
 import com.sun.jersey.api.client.ClientResponse.Status;
+import com.sun.jersey.multipart.FormDataParam;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 @Path("/{version}/{species}/genomic/position")
 @Produces("text/plain")
@@ -70,8 +73,8 @@ public class PositionWSServer extends GenericRestWSServer {
 //	
 	
 	@GET
-	@Path("/{geneId}/gene")
-	public Response getGeneByPosition(@PathParam("geneId") String query) {
+	@Path("/{positionId}/gene")
+	public Response getGeneByPosition(@PathParam("positionId") String query) {
 		try {
 			checkVersionAndSpecies();
 			List<Position> positionList = Position.parsePositions(query);
@@ -84,8 +87,8 @@ public class PositionWSServer extends GenericRestWSServer {
 	}
 	
 	@GET
-	@Path("/{geneId}/transcript")
-	public Response getTranscriptByPosition(@PathParam("geneId") String query) {
+	@Path("/{positionId}/transcript")
+	public Response getTranscriptByPosition(@PathParam("positionId") String query) {
 		try {
 			checkVersionAndSpecies();
 			List<Position> positionList = Position.parsePositions(query);
@@ -98,8 +101,8 @@ public class PositionWSServer extends GenericRestWSServer {
 	}
 	
 	@GET
-	@Path("/{geneId}/snp")
-	public Response getSNPByPosition(@PathParam("geneId") String query) {
+	@Path("/{positionId}/snp")
+	public Response getSNPByPositionGet(@PathParam("positionId") String query) {
 		try {
 			checkVersionAndSpecies();
 			List<Position> positionList = Position.parsePositions(query);
@@ -110,6 +113,22 @@ public class PositionWSServer extends GenericRestWSServer {
 			return createErrorResponse("getSNPByPosition", e.toString());
 		}
 	}
+	
+	@POST
+	@Consumes({MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_FORM_URLENCODED})
+	@Path("/snp")
+	public Response getSNPByPositionPost(@FormDataParam("positionId") String query) {
+		try {
+			checkVersionAndSpecies();
+			List<Position> positionList = Position.parsePositions(query);
+			SnpDBAdaptor snpAdaptor = dbAdaptorFactory.getSnpDBAdaptor(this.species, this.version);
+			return  generateResponse(query,  snpAdaptor.getAllByPositionList(positionList));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return createErrorResponse("getSNPByPosition", e.toString());
+		}
+	}
+	
 	
 	
 	@GET

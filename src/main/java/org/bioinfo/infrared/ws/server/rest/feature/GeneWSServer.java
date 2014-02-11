@@ -1,18 +1,15 @@
 package org.bioinfo.infrared.ws.server.rest.feature;
 
+import com.sun.jersey.multipart.FormDataParam;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -61,7 +58,22 @@ public class GeneWSServer extends GenericRestWSServer {
 
 	@GET
 	@Path("/{geneId}/info")
-	public Response getByEnsemblId(@PathParam("geneId") String query) {
+	public Response getByEnsemblIdGet(@PathParam("geneId") String query) {
+		try {
+			checkVersionAndSpecies();
+			GeneDBAdaptor geneDBAdaptor = dbAdaptorFactory.getGeneDBAdaptor(this.species, this.version);
+			return generateResponse(query, "GENE", geneDBAdaptor.getAllByNameList(StringUtils.toList(query, ",")));
+			//	return generateResponse(query, Arrays.asList(this.getGeneDBAdaptor().getAllByEnsemblIdList(StringUtils.toList(query, ","))));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return createErrorResponse("getByEnsemblId", e.toString());
+		}
+	}
+	
+	@POST
+        @Consumes({MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_FORM_URLENCODED})
+	@Path("/info")
+	public Response getByEnsemblIdPost(@FormDataParam("geneId") String query) {
 		try {
 			checkVersionAndSpecies();
 			GeneDBAdaptor geneDBAdaptor = dbAdaptorFactory.getGeneDBAdaptor(this.species, this.version);
